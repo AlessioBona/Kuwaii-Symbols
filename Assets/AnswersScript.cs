@@ -78,7 +78,6 @@ public class AnswersScript : MonoBehaviour
                 if(pic.rightAnswer == rightAnswer)
                 {
                     pic.KawaiiOn();
-                    CloseAnswers();
                     foreach (var playerToServer in FindObjectsOfType<PlayerToServer>())
                     {
                         if (playerToServer.isLocalPlayer)
@@ -86,6 +85,8 @@ public class AnswersScript : MonoBehaviour
                             playerToServer.AnswerFound();
                         }
                     }
+                    CloseAnswers();
+
                 }
             }
         } else
