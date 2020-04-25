@@ -1,16 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Networking;
-using TMPro;
 
-public class OneHelpRequest : MonoBehaviour
+public class StartButton : MonoBehaviour
 {
-    public int requestID = 999;
-    public NetworkInstanceId playerID;
-    public TextMeshProUGUI title;
-    public TextMeshProUGUI button;
+    public GameObject myPanel;
 
+    public void TurnOff()
+    {
+        myPanel.SetActive(false);
+    }
     // Start is called before the first frame update
     void Start()
     {

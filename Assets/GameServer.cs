@@ -21,20 +21,20 @@ public class GameServer : NetworkBehaviour
         // Not necessary, will implicitly be called after this function: globalScore = newGlobalScore;
     }
 
-    public void HelloFromClient(NetworkInstanceId clientNetId, string message)
+    public void HelpRequestFromClient(NetworkInstanceId clientNetId, int request)
     {
-        Debug.LogError(" > " + message);
+        // Debug.LogError(" > " + message);
 
-        RpcHelloClient(clientNetId, "A client once said to me: " + message);
+        RpcHelloClient(clientNetId, request);
     }
 
     [ClientRpc]
-    public void RpcHelloClient(NetworkInstanceId clientNetId, string message)
+    public void RpcHelloClient(NetworkInstanceId clientNetId, int request)
     {
         foreach (var playerToServer in FindObjectsOfType<PlayerToServer>()) {
             if (playerToServer.isLocalPlayer)
             {
-                playerToServer.HelloFromServer(clientNetId, message);
+                playerToServer.HelpRequestFromServer(clientNetId, request);
             }
         }
     }

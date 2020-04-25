@@ -11,6 +11,11 @@ public class AnswersScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        
+    }
+
+    private void Awake()
+    {
         gameObject.SetActive(false);
         hanziList = FindObjectOfType<HanziListHolder>().list;
     }
@@ -74,6 +79,13 @@ public class AnswersScript : MonoBehaviour
                 {
                     pic.KawaiiOn();
                     CloseAnswers();
+                    foreach (var playerToServer in FindObjectsOfType<PlayerToServer>())
+                    {
+                        if (playerToServer.isLocalPlayer)
+                        {
+                            playerToServer.AnswerFound();
+                        }
+                    }
                 }
             }
         } else

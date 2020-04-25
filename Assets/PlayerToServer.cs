@@ -8,6 +8,8 @@ public class PlayerToServer : NetworkBehaviour
     //[SyncVar]
     //public int prova;
 
+    public GameObject helpRequestPrefab;
+
     public void Update()
     {
         if (isClient && hasAuthority)
@@ -16,9 +18,19 @@ public class PlayerToServer : NetworkBehaviour
             {
                 Debug.LogError("Sending a message!!");
                 // send to server
-                CmdHelloServer(netId, "Hello " + Time.frameCount + " from " + netId);
+                CmdHelpServer(netId, 99);
             }
         }
+    }
+
+    public void CallForHelp(int helpId)
+    {
+        CmdHelpServer(netId, helpId);
+    }
+
+    public void AnswerFound()
+    {
+        CmdHelpServer(netId, 99);
     }
 
     [Command]
@@ -28,17 +40,42 @@ public class PlayerToServer : NetworkBehaviour
     }
 
     [Command]
-    public void CmdHelloServer(NetworkInstanceId clientNetId, string message)
+    public void CmdHelpServer(NetworkInstanceId clientNetId, int request)
     {
-        FindObjectOfType<GameServer>().HelloFromClient(clientNetId, message);
+        FindObjectOfType<GameServer>().HelpRequestFromClient(clientNetId, request);
     }
 
-    public void HelloFromServer(NetworkInstanceId clientNetId, string message)
+    public void HelpRequestFromServer(NetworkInstanceId clientNetId, int request)
     {
         var itsAMe = this.netId == clientNetId;
-        Debug.LogError(" > " + message + (itsAMe ? " (That's from me!!)" : ""));
-        Debug.LogError("   this.netId == " + this.netId);
-        Debug.LogError("   clientNetId == " + this.netId);
+        //Debug.LogError(" > " + message + (itsAMe ? " (That's from me!!)" : ""));
+        //Debug.LogError("   this.netId == " + this.netId);
+        //Debug.LogError("   clientNetId == " + this.netId);
+        if (!itsAMe)
+        {
+            if(request == 99)
+            {
+                OneHelpRequest[] requests = FindObjectsOfType<OneHelpRequest>();
+                foreach(OneHelpRequest req in requests)
+                {
+                    if(req.playerID == clientNetId)
+                    {
+                        GameObject.Destroy(req.gameObject);
+                    }
+                }
+                // get back
+            } else
+            {
+                GameObject newHR = Instantiate(helpRequestPrefab,FindObjectOfType<HelpRequestManager>().transform);
+                newHR.GetComponent<OneHelpRequest>().playerID = clientNetId;
+                newHR.GetComponent<OneHelpRequest>().requestID = request;
+                newHR.GetComponent<OneHelpRequest>().title.text = "Player n." + clientNetId + " asks:";
+                newHR.GetComponent<OneHelpRequest>().button.text = FindObjectOfType<HanziListHolder>().list[request];
+                // put request for Hanzi n. Request
+            }
+
+
+        }
     }
 
     //[TargetRpc]
